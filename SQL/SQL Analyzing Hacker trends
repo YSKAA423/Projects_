@@ -1,0 +1,104 @@
+ SELECT SUM(score)
+ FROM hacker_news;
+
+ SELECT user,SUM(score)
+ FROM hacker_news
+ GROUP BY 1
+ HAVING SUM(score) > 200
+ ORDER BY 2 DESC;
+
+SELECT (517 + 309 + 304 +282) / 6366.0 ;
+--I did below 
+SELECT user,COUNT(url)
+FROM hacker_news
+GROUP BY user 
+HAVING url = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+--CODE ANSWER
+SELECT user,
+   COUNT(*)
+FROM hacker_news
+WHERE url LIKE '%watch?v=dQw4w9WgXcQ%'
+GROUP BY 1
+ORDER BY 2 DESC;
+
+SELECT COUNT(title) as 'stories',
+CASE
+   WHEN url LIKE '%github.com%' THEN 'GitHub'
+   WHEN url LIKE '%Medium.com%' THEN 'Medium'
+   WHEN url LIKE '%nytimes.com%' THEN 'New York Times'
+   ELSE 'Other'
+  END AS 'Source'
+FROM hacker_news
+GROUP BY 2;
+
+SELECT timestamp
+FROM hacker_news
+LIMIT 10;
+
+SELECT timestamp,
+   strftime('%H', timestamp)
+FROM hacker_news
+GROUP BY 1
+LIMIT 20;
+
+SELECT strftime('%H', timestamp),
+ROUND(AVG(score)) AS 'Average',
+COUNT(*) AS 'Number of stories'
+FROM hacker_news
+WHERE timestamp IS NOT NULL
+GROUP BY 1
+ORDER BY 2 DESC;
+-- please get the COUNT used right
+
+ SELECT SUM(score)
+ FROM hacker_news;
+
+ SELECT user,SUM(score)
+ FROM hacker_news
+ GROUP BY 1
+ HAVING SUM(score) > 200
+ ORDER BY 2 DESC;
+
+SELECT (517 + 309 + 304 +282) / 6366.0 ;
+--I did below 
+SELECT user,COUNT(url)
+FROM hacker_news
+GROUP BY user 
+HAVING url = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+--CODE ANSWER
+SELECT user,
+   COUNT(*)
+FROM hacker_news
+WHERE url LIKE '%watch?v=dQw4w9WgXcQ%'
+GROUP BY 1
+ORDER BY 2 DESC;
+
+SELECT COUNT(title) as 'stories',
+CASE
+   WHEN url LIKE '%github.com%' THEN 'GitHub'
+   WHEN url LIKE '%Medium.com%' THEN 'Medium'
+   WHEN url LIKE '%nytimes.com%' THEN 'New York Times'
+   ELSE 'Other'
+  END AS 'Source'
+FROM hacker_news
+GROUP BY 2;
+
+SELECT timestamp
+FROM hacker_news
+LIMIT 10;
+
+SELECT timestamp,
+   strftime('%H', timestamp)
+FROM hacker_news
+GROUP BY 1
+LIMIT 20;
+
+SELECT strftime('%H', timestamp),
+ROUND(AVG(score)) AS 'Average',
+COUNT(*) AS 'Number of stories'
+FROM hacker_news
+WHERE timestamp IS NOT NULL
+GROUP BY 1
+ORDER BY 2 DESC;
+
+
