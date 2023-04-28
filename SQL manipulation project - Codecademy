@@ -1,3 +1,5 @@
+--Basic Manipulation on a table
+
 CREATE TABLE friends(
   id INTEGER ,
   name TEXT ,
