@@ -1,3 +1,5 @@
+-- Querying data from a database containing New York restaurants info
+
 SELECT *
 FROM nomnom;
 
