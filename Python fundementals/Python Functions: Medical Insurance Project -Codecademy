@@ -1,0 +1,30 @@
+--- Finding the difference in insurances between people 
+
+# Create calculate_insurance_cost() function below: 
+def calculate_insurance_cost(name,age,sex,bmi,num_of_children,smoker):
+  estimated_cost = 50*age - 128*sex + 370*bmi + 425*num_of_children + 24000*smoker - 12500
+  print(f"The estimated insurance cost is for {name} {estimated_cost}")
+  message = f"The estimated insurance cost is for {name} {estimated_cost}"
+  return estimated_cost,message
+
+def calculate_difference(first_person,second_person):
+
+  difference_in_cost = first_person - second_person
+  print(f"The difference in insurance cost is {difference_in_cost} dollars.")
+  
+
+
+#
+
+# Estimate Maria's insurance cost
+marias_insurance_cost = calculate_insurance_cost(name = "maria" , age =28,sex = 0,bmi = 26.2,num_of_children = 3,smoker = 0)
+
+
+
+
+# Estimate Omar's insurance cost 
+omar_insurance_cost,omar_message = calculate_insurance_cost(name = "omar",age = 35, sex = 1, bmi = 22.2, num_of_children = 0, smoker = 1)
+# Estimate my cost
+yaser_insurance_cost,yaser_message = calculate_insurance_cost(name = "yaser",age = 22, sex = 1, bmi = 30, num_of_children = 0, smoker = 0)
+
+calculate_difference(omar_insurance_cost,yaser_insurance_cost)
