@@ -187,4 +187,20 @@ def retrieve_traits(DataSet):
 
 retrieve_traits(My_Set)
 
+Output:
+
+The average age is 39.20702541106129
+The majority are from the southeast with 364 people.
+{'southwest': 4012754.647620001, 'southeast': 5363689.763290002, 'northwest': 4035711.9965399993, 'northeast': 4343668.583308999}
+The Highest paying region is the southeast with 5363689.763290002 $
+{'southwest': 52590.82939, 'southeast': 62592.87309, 'northwest': 60021.39897, 'northeast': 58571.07448} 
+
+This person is a female,31 years old with a bmi score of 38.095,children status: 1,smoking status: yes from northeast that pays 58571.07448 
+
+This person is a male,60 years old with a bmi score of 32.8,children status: 0,smoking status: yes from southwest that pays 52590.82939 
+
+This person is a male,52 years old with a bmi score of 34.485,children status: 3,smoking status: yes from northwest that pays 60021.39897 
+
+This person is a male,45 years old with a bmi score of 30.36,children status: 0,smoking status: yes from southeast that pays 62592.87309 
+
 #I will upload this portion for now and will try to update it later on to check how bmi (assumed parameter of health) and age affects the charge value
