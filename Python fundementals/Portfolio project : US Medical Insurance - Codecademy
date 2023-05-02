@@ -1,0 +1,190 @@
+# This is my first portfolio project provided from Codecademy Data Science career path
+# It uses "insurance.csv" file with columns defined as age,sex,bmi,children,smoker,region,charges(the cost itself)
+# The aim is to anaylze the data myself to hopefully find different facts that I can establish or conclusions that I can reach
+# This project uses the basics provided until utilizing functions classes and libraries like pandas can make it easier and can be updated in the future
+# Codecademy has provided different suggestions however, I will be analyzing two of them
+# Thank you for taking your time to review this project
+import csv
+My_Set = []
+My_Set_age = []
+Region = []
+Charges = []
+# Making a function to retrieve the set
+
+def retracting_info(file):
+    with open(file,mode='r') as file:
+        Data_Set = csv.DictReader(file)
+        for row in Data_Set:
+            row['age'] = int(row['age'])
+            row['bmi'] = float(row['bmi'])
+            row['children'] = int(row['children'])
+            row['charges'] = float(row['charges'])
+            # The other rows are string so no need to cast them
+            My_Set.append(row)
+            My_Set_age.append(row['age'])
+            Region.append(row['region'])
+            Charges.append((row['charges']))
+retracting_info('C:/Users/yasee/PycharmProjects/Porfolio_Project_DS_Path/Data/insurance.csv')
+#print(My_Set)
+#print(My_Set_age)
+# print(Region)
+# print(Charges)
+print("\n")
+# 1st analysis finding the average age in the Set
+
+def avg_age(Set):
+    age = 0
+    avg_age = 0
+    for i in Set:
+        age += int(i)
+    avg_age = age / len(Set)
+    return avg_age
+
+average_age = avg_age(My_Set_age)
+print(f"The average age is {average_age}")
+
+# 2nd analysis finding where the majority are from
+
+def majority_are_from(Set):
+    SW = 0  # SouthWast
+    SE = 0  # SouthEast
+    NW = 0  # NorthWest
+    NE = 0  # NorthEast
+    Majority = []
+    regions = ['southwest',"southeast","northwest","northeast"]
+    for region in Set:
+        if region == 'southwest':
+            SW += 1
+        elif region == 'southeast':
+            SE += 1
+        elif region == 'northwest':
+            NW +=1
+        else:
+            NE +=1
+    Majority.append(SW)
+    Majority.append(SE)
+    Majority.append(NW)
+    Majority.append(NE)
+    map = (zip(regions,Majority))
+    mapdict = {k:v for k,v in map} #making a dictionary to map each region to the count number
+    # print(mapdict)
+    max = 0
+    reg = ""
+    for k in mapdict:
+        if mapdict[k] > max:
+            max = mapdict[k]
+            reg = k
+
+    print(f"The majority are from the {reg} with {max} people.")
+
+Mapping = majority_are_from(Region)
+
+# Now Trying different approaches of my own we will compare the charges between regions
+
+list_reg_charges = list(zip(Region,Charges))
+list_reg_charges = [list(t) for t in list_reg_charges]
+# print(list_reg_charges)
+
+
+def region_charges(list):
+    SWC = 0
+    SEC = 0
+    NWC = 0
+    NEC = 0
+    charges = []
+    regions = ['southwest', "southeast", "northwest", "northeast"]
+    for index in list:
+        if index[0] == 'southwest':
+            SWC += index[-1]
+        elif index[0] == 'southeast':
+            SEC += index[-1]
+        elif index[0] == 'northwest':
+            NWC += index[-1]
+        else:
+            NEC += index[-1]
+    charges.append(SWC)
+    charges.append(SEC)
+    charges.append(NWC)
+    charges.append(NEC)
+    map_reg_ch = {k:v for k,v in zip(regions,charges)}
+    # print(charges)
+    return map_reg_ch
+
+charges_per_region = region_charges(list_reg_charges)
+print(charges_per_region)
+
+#perhaps you would like the highest region to pay charges
+
+def Most_Expensive(Set):
+    max =0
+    reg = ""
+    for key in Set:
+        if Set[key]>max:
+            max = Set[key]
+            reg =key
+    return max,reg
+
+Max_charge , Most_Ex_reg = Most_Expensive(charges_per_region)
+
+print(f"The Highest paying region is the {Most_Ex_reg} with {Max_charge} $")
+
+# I will now try to find the highest charge in each region perhaps we could find common traits
+
+
+
+def highest_charge(List_reg_charges):
+    SWCMAX = 0
+    SECMAX = 0
+    NWCMAX = 0
+    NECMAX = 0
+    charges = []
+    regions = ['southwest', "southeast", "northwest", "northeast"]
+    for index in list_reg_charges:
+        if index[0] == 'southwest':
+            if index[-1] > SWCMAX:
+                SWCMAX = index[-1]
+        elif index[0] == 'southeast':
+            if index[-1] > SWCMAX:
+                SECMAX = index[-1]
+        elif index[0] == 'northwest':
+            if index[-1] > SWCMAX:
+                NWCMAX = index[-1]
+        elif index[0] == 'northeast':
+            if index[-1] > SWCMAX:
+                NECMAX = index[-1]
+    charges.append(SWCMAX)
+    charges.append(SECMAX)
+    charges.append(NWCMAX)
+    charges.append(NECMAX)
+    map_reg_ch = {k: v for k, v in zip(regions, charges)}
+    return map_reg_ch,SWCMAX,SECMAX,NWCMAX,NECMAX
+
+
+Highest_in_regions,H_southwest,H_southeast,H_northwest,H_northeast = highest_charge(list_reg_charges)
+print(f"{Highest_in_regions} \n")
+
+
+# print(My_Set)
+
+def retrieve_traits(DataSet):
+    for index in DataSet:
+        if index['charges'] == H_southwest:
+            print(f"This person is a {index['sex']},{index['age']} years old with a bmi score of {index['bmi']},"
+                  f"children status: {index['children']},"
+                  f"smoking status: {index['smoker']} from {index['region']} that pays {H_southwest} \n")
+        elif index['charges'] == H_southeast:
+            print(f"This person is a {index['sex']},{index['age']} years old with a bmi score of {index['bmi']},"
+                  f"children status: {index['children']},"
+                  f"smoking status: {index['smoker']} from {index['region']} that pays {H_southeast} \n")
+        elif index['charges'] == H_northwest:
+            print(f"This person is a {index['sex']},{index['age']} years old with a bmi score of {index['bmi']},"
+                  f"children status: {index['children']},"
+                  f"smoking status: {index['smoker']} from {index['region']} that pays {H_northwest} \n")
+        elif index['charges'] == H_northeast:
+            print(f"This person is a {index['sex']},{index['age']} years old with a bmi score of {index['bmi']},"
+                  f"children status: {index['children']},"
+                  f"smoking status: {index['smoker']} from {index['region']} that pays {H_northeast} \n")
+
+retrieve_traits(My_Set)
+
+#I will upload this portion for now and will try to update it later on to check how bmi (assumed parameter of health) and age affects the charge value
