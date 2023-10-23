@@ -1,0 +1,136 @@
+# random is a library to assist with the cpu using random numbers to make moves
+from random import randint
+
+#Initialze the board and fill it
+Board = []
+f = 1
+l = 4
+for i in range(3):
+    row = [x for x in range(f,l)]
+    Board.append(row)
+    f += 3
+    l += 3
+# A list tracking the occupied and free slots in the game
+occupied = []
+
+
+#According to rules the computer always does the first move 'x' at the center of the board, the user will use 'o'
+
+Board[1][1] = 'x'
+occupied.append((1,1))
+
+def display_board(board):
+    # The function accepts one parameter containing the board's current status
+    # and prints it out to the console.
+    print(f"""+-------+-------+-------+
+|       |       |       |
+|   {Board[0][0]}   |   {Board[0][1]}   |   {Board[0][2]}   |
+|       |       |       |
++-------+-------+-------+
+|       |       |       |
+|   {Board[1][0]}   |   {Board[1][1]}   |   {Board[1][2]}   |
+|       |       |       |
++-------+-------+-------+
+|       |       |       |
+|   {Board[2][0]}   |   {Board[2][1]}   |   {Board[2][2]}   |
+|       |       |       |
++-------+-------+-------+""")
+
+def enter_move(Board):
+    # The function accepts the board's current status, asks the user about their move, 
+    # checks the input, and updates the board according to the user's decision.
+    while True:
+        Slot = int(input("Enter your move: "))
+        if Slot > 0 and Slot < 10:
+            for i in range(len(Board)):
+                for j in range(len(Board[i])):
+                    if Board[i][j] == Slot and (i, j) not in occupied:
+                        Board[i][j] = 'o'
+                        occupied.append((i, j))
+                        return  # Successful move
+            print("Slot is already occupied. Enter another move.")
+        else:
+            print("Invalid slot. Slot should be between 1 and 9.")
+
+def make_list_of_free_fields(Board):
+    # The function browses the board and builds a list of all the free squares; 
+    # the list consists of tuples, while each tuple is a pair of row and column numbers.
+    free = []
+    for i in range(len(Board)):
+        for j in range(len(Board[i])):
+            if Board[i][j] not in ['x', 'o']:
+                free.append((i,j))
+    return free   
+
+def victory_for(Board, sign):
+    # The function analyzes the board's status in order to check if 
+    # the player using 'O's or 'X's has won the game
+    
+# Checking Rows (was thinking of making a series of if-elif statements but a simple search reminded me of simplifying my word)
+    for i in range(3):
+        if all(Board[i][j] == sign for j in range(3)):
+           
+            return True
+
+# Checking Columns
+    for j in range(3):
+        if all(Board[i][j] == sign for i in range(3)):
+            
+            return True
+
+# For diagonals (main diagonal 00 - 11 - 22) or (other diagonal 02 - 11 - 20)
+# for the other diagonal 02 ( i = 0 , 2-i = 2) 11 (i = 1 , 2-i = 1) 20 (i=2 , 2-i =0)
+    if all(Board[i][i] == sign for i in range(3)) \
+or all(Board[i][2-i] == sign for i in range(3)):
+        
+        return True
+
+# Checking for a tie    
+    if all(all(slot in ['x', 'o'] for slot in row) for row in Board) and not victory_for(Board, 'x') and not victory_for(Board, 'o'):
+        
+        return 'tie'
+
+    return False
+def draw_move(Board):
+    # The function draws the computer's move and updates the board.
+    while True:
+        Slot = randint(1, 9)
+        for i in range(len(Board)):
+            for j in range(len(Board[i])):
+                if Board[i][j] == Slot and (i, j) not in occupied:
+                    Board[i][j] = 'x'
+                    occupied.append((i, j))
+                    return  # Move successful, exit the function
+    
+
+
+#turns 
+turns = 6
+
+
+display_board(Board)
+
+for turn in range(turns):
+#MY TURN
+
+    enter_move(Board)
+    display_board(Board)
+    result = victory_for(Board, 'o')
+    if result == 'tie':
+        print("It's a tie!")
+        break  # End the game
+    elif result:
+        print("User wins!")
+        break  # End the game
+
+    # CPU's turn
+
+    draw_move(Board)
+    display_board(Board)
+    result = victory_for(Board, 'x')
+    if result == 'tie':
+        print("It's a tie!")
+        break  # End the game
+    elif result:
+        print("CPU wins!")
+        break  # End the game
