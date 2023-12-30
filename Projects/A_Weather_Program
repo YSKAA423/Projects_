@@ -1,0 +1,161 @@
+import requests
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# The project is simple, a weather program that takes the input that is a city
+# then it retrieves information acquired thanks to openweathermap api
+
+# I want to kick things off by defining a function that retrieves a json file (similar to dictionary in Python)
+# through the documentation of the api "https://openweathermap.org/forecast5#geo5"
+"""
+API call
+
+api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API key}
+
+"""
+# We want to use the city name rather than the longitude and latitude, we will use geocoding
+# "https://openweathermap.org/forecast5#geocoding"
+"""
+Built-in API request by city name
+You can search weather forecast for 5 days with data every 3 hours by city name. 
+All weather data can be obtained in JSON and XML formats.
+
+API call
+
+api.openweathermap.org/data/2.5/forecast?q={city name}&appid={API key} 
+
+api.openweathermap.org/data/2.5/forecast?q={city name},{country code}&appid={API key}
+
+api.openweathermap.org/data/2.5/forecast?q={city name},{state code},{country code}&appid={API key}
+
+"""
+
+
+# Multi-Line strings are directly taken from their official documentation, the first call will be utilized
+# requests library is used to make a get request
+def retireve_info(base_url, city_name, my_api_key):
+    url = f"https://{base_url}q={city_name}&appid={my_api_key}"
+    return requests.get(url).json()
+
+
+# To be clear the temperature in the info that the api returns is in kelvin
+def kelvin_to_celsius_fahrenheit(k_temp):
+    c = k_temp - 273.15
+    f = c * (9 / 5) + 32
+    return round(c, 2), round(f, 2)
+
+
+def plot_temperatures_vs_time(Timestamps, Temperatures, Range):
+    plt.close('all')
+    plt.plot(Timestamps, Temperatures, marker='o')
+    plt.subplots_adjust(bottom=0.3)
+    ax = plt.subplot()
+    ax.set_xticks(Range)
+    ax.set_xticklabels(Timestamps, rotation=90, ha='right')
+    plt.xlabel('Timestamps')
+    plt.ylabel('Temps C')
+    plt.title('Temperatures from today until five days')
+    plt.show()
+
+def plot_speeds_vs_time(Timestamps, Speeds, Range):
+    plt.close('all')
+    plt.plot(Timestamps, Speeds, marker='v')
+    plt.subplots_adjust(bottom=0.3)
+    ax = plt.subplot()
+    ax.set_xticks(Range)
+    ax.set_xticklabels(Timestamps, rotation=90, ha='right')
+    plt.xlabel('Timestamps')
+    plt.ylabel('Speed m/s')
+    plt.title('Wind speeds from today until five days')
+    plt.show()
+
+
+def plot_count(data):
+    plt.close('all')
+    sns.countplot(data)
+    plt.subplots_adjust(bottom=0.3)
+    plt.title('Distribution')
+    plt.ylabel("Count")
+    plt.show()
+
+
+BASE_URL = "api.openweathermap.org/data/2.5/forecast?"
+api_key = open("API_KEY.txt", 'r').read().strip()
+city = input("Please enter city of choice: ")
+
+info = retireve_info(BASE_URL, city, api_key)  # A dictionary output
+
+"""
+The output contains: outputs relating to the success of the call but what we need
+are:
+
+5 day /3 hours for each day  
+
+
+'list' key here as it contains (dt : the time stamp),
+(main : (current_temperature, min and max temperatures, pressure, humidity ... etc )),
+(weather : (Clouds,Clear .. etc, the description of the main weather condition,)),
+(wind : (speed, deg, gust ... etc))
+
+'city' key has the information about the city like the country code, it's name
+, coordinates, population, timezone and both sunrise time and sunset time 
+
+
+Note: The list here contains dictionaries starting from the current day 
+plus 5 days for 6 days in total, e.g "today" is 12/9/2023 the last day would be 12/14/2023,
+the first dictionary would relate to e.g 12/9/2023 9:00:00 the next one (prediction) would 
+contain the information 3 hours away at e.g 12/9/2023 12:00:00 and such until it reaches the last day
+"""
+
+k_temp = info['list'][0]['main']['temp']
+c_temp, f_temp = kelvin_to_celsius_fahrenheit(k_temp)
+
+k_feels_like_t = info['list'][0]['main']['feels_like']
+c_feels_like_t, f_feels_like_t = kelvin_to_celsius_fahrenheit(k_feels_like_t)
+
+humidity = info['list'][0]['main']['humidity']
+
+weather_condition = info['list'][0]['weather'][0]['main']
+
+weather_description = info['list'][0]['weather'][0]['description']
+
+wind_speed = info['list'][0]['wind']['speed']
+date_time = info['list'][0]['dt_txt']
+
+print(info)
+
+print(f"""
+Country code: {info['city']['country']}
+City: {info['city']['name']}
+Population: {info['city']['population']}
+Date and time (timestamp): {date_time}
+Current Temperature: {c_temp} Celsius/ {f_temp} Fahrenheit
+What the temperature feels like: {c_feels_like_t} Celsius/ {f_feels_like_t} Fahrenheit
+Humidity: {humidity}%
+Weather Condition: {weather_condition}
+Weather Description: {weather_description}
+Wind Speed: {wind_speed} m/s
+""")
+
+# I want to extract some data in order to insert some visuals for more understanding
+
+Timestamps = [data['dt_txt'] for data in info['list']]
+Temperatures = [kelvin_to_celsius_fahrenheit(data['main']['temp'])[0] for data in info['list']]
+
+wind_speeds = [data['wind']['speed'] for data in info['list']]
+
+overall_weather_conditions = [data['weather'][0]['main'] for data in info['list']]
+overall_weather_descriptions = [data['weather'][0]['description'] for data in info['list']]
+Clouds_weather_descriptions = [data['weather'][0]['description'] for data in info['list'] if
+                               data['weather'][0]['main'] == 'Clouds']
+
+# Temperatures over time (A simple time series line plot to showcase the predicted temperatures):
+plot_temperatures_vs_time(Timestamps, Temperatures, range(len(Timestamps)))
+
+# Wind speeds over time
+plot_speeds_vs_time(Timestamps, wind_speeds, range(len(Timestamps)))
+
+# Showing the count of different weather states (Categorical hence the usage of sns.countplot() in the function to use bar charts)
+plot_count(overall_weather_descriptions) # All conditions
+plot_count(Clouds_weather_descriptions) # Sky's description
+
