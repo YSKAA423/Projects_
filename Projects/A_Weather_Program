@@ -75,7 +75,6 @@ def plot_count(data):
     sns.countplot(data)
     plt.subplots_adjust(bottom=0.3)
     plt.title('Distribution')
-    plt.ylabel("Count")
     plt.show()
 
 
@@ -122,7 +121,7 @@ weather_description = info['list'][0]['weather'][0]['description']
 wind_speed = info['list'][0]['wind']['speed']
 date_time = info['list'][0]['dt_txt']
 
-print(info)
+# print(info) the full message is here for reference
 
 print(f"""
 Country code: {info['city']['country']}
@@ -146,8 +145,9 @@ wind_speeds = [data['wind']['speed'] for data in info['list']]
 
 overall_weather_conditions = [data['weather'][0]['main'] for data in info['list']]
 overall_weather_descriptions = [data['weather'][0]['description'] for data in info['list']]
-Clouds_weather_descriptions = [data['weather'][0]['description'] for data in info['list'] if
-                               data['weather'][0]['main'] == 'Clouds']
+
+# Clouds_weather_descriptions = [data['weather'][0]['description'] for data in info['list'] if
+#                                data['weather'][0]['main'] == 'Clouds']  Specific Cloud description if needed
 
 # Temperatures over time (A simple time series line plot to showcase the predicted temperatures):
 plot_temperatures_vs_time(Timestamps, Temperatures, range(len(Timestamps)))
@@ -157,5 +157,3 @@ plot_speeds_vs_time(Timestamps, wind_speeds, range(len(Timestamps)))
 
 # Showing the count of different weather states (Categorical hence the usage of sns.countplot() in the function to use bar charts)
 plot_count(overall_weather_descriptions) # All conditions
-plot_count(Clouds_weather_descriptions) # Sky's description
-
